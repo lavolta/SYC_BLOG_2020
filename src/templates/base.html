@@ -49,19 +49,25 @@
         var markedContent = marked(content)
         $(this).html(markedContent)
       })
+      let comments = document.querySelectorAll('.js-comments');
+      if(!comments && !comments.length) {
+        return;
+      }
+      function toggleClass(elem, myClass) {
+        elem.classList.toggle(myClass);
+      }
+      comments.forEach(comment => {
+        var commentFormBtn = comment.querySelector('.js-comments-form');
+        var commentFormShow = comment.querySelector('.js-comments-show');
+        commentFormBtn.addEventListener('click', () => {
+          toggleClass(comment, 'c-comment--showForm')
+        })
+        commentFormShow.addEventListener('click', () => {
+          toggleClass(comment, 'c-comment--showComments')
+        })
+      })
       $(".post-detail-item img").each(function(){
         $(this).addClass("img-fluid rounded")
-      })
-      $('a[id^="comment_replies_btn_"]').click(function(event){
-        event.preventDefault();
-        console.log("ok");
-        var more_Content = $(this).siblings('div[id^="comment_replies_"]');
-        more_Content.fadeToggle();
-      })
-      $('a[id^="comment_reply_btn_"]').click(function(event){
-        event.preventDefault();
-        var more_Content = $(this).siblings('div[id^="comment_reply_"]');
-        more_Content.fadeToggle();
       })
       $('.post_comments_link').click(function(event){
         event.preventDefault();

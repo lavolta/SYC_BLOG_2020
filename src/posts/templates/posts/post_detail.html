@@ -73,23 +73,35 @@
                 <input type="submit" value="Répondre" class="btn btn-outline-secondary">
               </form>
             </div>
-
-            <div id="comment_replies_{{ forloop.counter }}" class="comment-replies" style="display:none;">
-              {% for child_comment in comment.children %}
-                <div class="container ml-2">
-                  <div class="jumbotron jumbotron-fluid jumbotron-comment-replies">
-                    <p class='mb-0 post-author-date'>By <a class="link-color-5" href="{% url 'posts-app:posts-list-author' author=child_comment.user %}"><b>{{child_comment.user}}</b></a> le {{child_comment.timestamp|date:"d/m/y"}}</p>
-                    <p class="mb-0 comments-content">{{ child_comment.content }}</p>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
+    {% for comment in comments %}
+    <div class="c-comments js-comments">
+      <div class="c-comments__top">
+        <p class='mb-0 post-author-date'>By <a class="link-color-5" href="{% url 'posts-app:posts-list-author' author=comment.user %}"><b>{{ comment.user }}</b></a> le {{ comment.timestamp|date:"d/m/y" }}</p>
+        <p class="mb-0 comments-content">{{ comment.content|linebreaks }}</p>
+        <button class="c-comments__form js-comments-form">Répondre</button>
+        {% if comment.children.count > 0 %}
+        <div class="c-comments__infos">
+          <p>{{ comment.children.count }} réponse{% if comment.children.count > 1%}s{% endif %} | </p> <button class="c-comments__show js-comments-show">Voir</button>
+        </div>
+        {% endif %}
+      </div>
+      <div class="c-comments__form">
+        <form method="POST" action="."> {% csrf_token %}
+          {{ form|crispy}}
+          <input type="hidden" name="parent_id" value="{{ comment.id }}">
+          <input type="submit" value="Reply" class="btn btn-primary">
+        </form>
+      </div>
+      <div class="c-comments__list">
+        {% for child_comment in comment.children %}
+        <div class="container ml-2">
+          <div class="jumbotron jumbotron-fluid jumbotron-comment-replies">
+            <p class='mb-0 post-author-date'>By <a class="link-color-5" href="{% url 'posts-app:posts-list-author' author=child_comment.user %}"><b>{{child_comment.user}}</b></a> le {{child_comment.timestamp|date:"d/m/y"}}</p>
+            <p class="mb-0 comments-content">{{ child_comment.content }}</p>
           </div>
+        </div>
         {% endfor %}
       </div>
-    {% else %}
-      <br>
-    {% endif %}
-  </div>
-  {% endblock content %}
+    </div>
+    {% endfor %}
 </body>
